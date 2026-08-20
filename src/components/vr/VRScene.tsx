@@ -416,6 +416,30 @@ export default function VRScene() {
     /** Free counter area (kitchen-local): the run along the left wall, without the hob. */
     const COUNTER = { minX: -1.8, maxX: -0.8, minZ: -1.05, maxZ: 0.9, surfaceY: 0.93 };
 
+    /**
+     * Entering a level (from the start menu or by skipping ahead) auto-completes
+     * every task of the previous levels — they can no longer be done otherwise.
+     */
+    const completePreviousLevels = (lvl: "bedroom" | "bathroom" | "kitchen") => {
+      if (lvl === "bedroom") return;
+      // Level 1
+      task2Complete = true;
+      task3Complete = true;
+      completeTask("clock");
+      completeTask("phone");
+      completeTask("door1");
+      if (lvl === "kitchen") {
+        // Level 2
+        task4Complete = true;
+        task5Complete = true;
+        completeTask("toothbrush");
+        completeTask("sunscreen");
+        completeTask("door2");
+      }
+    };
+
+
+
     // ---------- Visual agnosia filter ----------
     /** Fixed objects: revealed while a controller is within 10 cm. */
     type StaticMask = { mask: AgnosiaMask; box: THREE.Box3 };
