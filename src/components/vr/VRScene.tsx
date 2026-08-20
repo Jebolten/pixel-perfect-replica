@@ -94,8 +94,9 @@ export default function VRScene() {
     player.add(camera);
     scene.add(player);
 
-    // ---------- To-do list / scoreboard (top right of the field of view) ----------
+    // ---------- Current objective banner (hidden in the start / end world) ----------
     const hud = createTaskHud();
+    hud.mesh.visible = false;
     camera.add(hud.mesh);
     const doneSet = new Set<string>();
     const completeTask = (id: string) => {
@@ -104,6 +105,12 @@ export default function VRScene() {
       hud.update(doneSet);
       setDoneTasks([...doneSet]);
     };
+    const resetTasks = () => {
+      doneSet.clear();
+      hud.update(doneSet);
+      setDoneTasks([]);
+    };
+
 
 
     // Gradient sky
