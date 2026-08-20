@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "61fb6288-d84e-4c25-b8e5-3d9a158b0c22",
+  "asset_id": "7401b21f-4d23-43e8-8ebf-6a2d997b3a65",
   "project_id": "d6deefb3-9672-47f9-b72c-6b23508cc635",
-  "url": "/__l5e/assets-v1/61fb6288-d84e-4c25-b8e5-3d9a158b0c22/classic_rotary_phone.glb",
-  "r2_key": "a/v1/d6deefb3-9672-47f9-b72c-6b23508cc635/61fb6288-d84e-4c25-b8e5-3d9a158b0c22/classic_rotary_phone.glb",
+  "url": "/__l5e/assets-v1/7401b21f-4d23-43e8-8ebf-6a2d997b3a65/classic_rotary_phone.glb",
+  "r2_key": "a/v1/d6deefb3-9672-47f9-b72c-6b23508cc635/7401b21f-4d23-43e8-8ebf-6a2d997b3a65/classic_rotary_phone.glb",
   "original_filename": "classic_rotary_phone.glb",
-  "size": 563888,
+  "size": 516800,
   "content_type": "model/gltf-binary",
-  "created_at": "2026-08-20T19:28:02Z"
+  "created_at": "2026-08-20T19:30:01Z"
 }
