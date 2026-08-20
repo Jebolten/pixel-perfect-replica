@@ -541,7 +541,7 @@ export default function VRScene() {
       room.group.add(frame3d.group);
       addItemMask(frame3d.group);
 
-      ["bed", "nightTable", "wardrobe", "desk", "window", "door"].forEach(addStaticMask);
+      ["bed", "nightTable", "wardrobe", "desk", "window", "door"].forEach((n) => addStaticMask(n));
 
       void loadAlarmClock()
         .then((clock) => {
@@ -580,7 +580,7 @@ export default function VRScene() {
       player.rotation.y = 0; // camera looks toward -Z, away from the front-wall door
       setStatus("Level 2 — The Bathroom.");
 
-      ["sink", "toilet", "cabinet", "door"].forEach(addStaticMask);
+      ["sink", "toilet", "cabinet", "door"].forEach((n) => addStaticMask(n));
 
       const addBathroomItem = (
         g: THREE.Group,
