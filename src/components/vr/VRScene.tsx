@@ -644,7 +644,11 @@ export default function VRScene() {
         addStaticMask(n),
       );
       // Fridge shell only — the door, its handle and the shelf contents stay untouched.
-      addStaticMask("fridge", (o) => o.name === "fridgeDoor" || o.name.startsWith("fridge" + "Juice") || o.name.startsWith("fridgeBell") || o.name.startsWith("fridgeEgg"));
+      addStaticMask(
+        "fridge",
+        (o) => o.name === "fridgeDoor" || /^fridge(Juice|Bell|Egg)/.test(o.name),
+      );
+
 
 
       void Promise.all([loadCandle(), loadCoffeeMug()])
