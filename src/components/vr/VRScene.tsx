@@ -552,6 +552,7 @@ export default function VRScene() {
       room = createBedroom();
       level = "bedroom";
       hud.mesh.visible = true;
+      completePreviousLevels("bedroom");
       scene.add(room.group);
       refreshBlockers();
       menu.visible = false;
@@ -594,6 +595,7 @@ export default function VRScene() {
       room = createBathroom();
       level = "bathroom";
       hud.mesh.visible = true;
+      completePreviousLevels("bathroom");
       scene.add(room.group);
       refreshBlockers();
       menu.visible = false;
@@ -649,6 +651,7 @@ export default function VRScene() {
       room = createKitchen();
       level = "kitchen";
       hud.mesh.visible = true;
+      completePreviousLevels("kitchen");
       scene.add(room.group);
       refreshBlockers();
       fridgeDoor = (room.group.getObjectByName("fridgeDoor") as THREE.Group) ?? null;
