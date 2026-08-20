@@ -1100,7 +1100,10 @@ export default function VRScene() {
         }
         for (const m of itemMasks) {
           m.setRevealed(heldObjects.has(m.target));
-          if (!m.revealed) m.sync();
+          if (!m.revealed) {
+            m.sync();
+            m.update(t);
+          }
         }
 
         if (staticMasks.length) {
@@ -1114,8 +1117,10 @@ export default function VRScene() {
               }
             }
             s.mask.setRevealed(near);
+            if (!s.mask.revealed) s.mask.update(t);
           }
         }
+
       }
 
 
