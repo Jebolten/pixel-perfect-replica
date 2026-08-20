@@ -94,8 +94,9 @@ export default function VRScene() {
     player.add(camera);
     scene.add(player);
 
-    // ---------- To-do list / scoreboard (top right of the field of view) ----------
+    // ---------- Current objective banner (hidden in the start / end world) ----------
     const hud = createTaskHud();
+    hud.mesh.visible = false;
     camera.add(hud.mesh);
     const doneSet = new Set<string>();
     const completeTask = (id: string) => {
@@ -104,6 +105,12 @@ export default function VRScene() {
       hud.update(doneSet);
       setDoneTasks([...doneSet]);
     };
+    const resetTasks = () => {
+      doneSet.clear();
+      hud.update(doneSet);
+      setDoneTasks([]);
+    };
+
 
 
     // Gradient sky
@@ -521,6 +528,7 @@ export default function VRScene() {
       clearRoom();
       room = createBedroom();
       level = "bedroom";
+      hud.mesh.visible = true;
       scene.add(room.group);
       refreshBlockers();
       menu.visible = false;
@@ -562,6 +570,7 @@ export default function VRScene() {
       clearRoom();
       room = createBathroom();
       level = "bathroom";
+      hud.mesh.visible = true;
       scene.add(room.group);
       refreshBlockers();
       menu.visible = false;
@@ -616,6 +625,7 @@ export default function VRScene() {
       clearRoom();
       room = createKitchen();
       level = "kitchen";
+      hud.mesh.visible = true;
       scene.add(room.group);
       refreshBlockers();
       fridgeDoor = (room.group.getObjectByName("fridgeDoor") as THREE.Group) ?? null;
@@ -671,6 +681,8 @@ export default function VRScene() {
       if (level === "finale") return;
       clearRoom();
       level = "finale";
+      hud.mesh.visible = false;
+      resetTasks();
       finale = createFinale();
       scene.add(finale.group);
       menu.visible = true;

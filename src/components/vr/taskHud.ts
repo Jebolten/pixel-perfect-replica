@@ -55,13 +55,15 @@ export type TaskHud = {
   dispose: () => void;
 };
 
+const ALL_TASKS: TaskDef[] = TASK_GROUPS.flatMap((g) => g.tasks);
+
 /**
- * Small to-do / score board pinned to the top-right of the player's field of view.
- * Attach the returned mesh to the camera.
+ * Compact, see-through objective banner near the centre of the field of view.
+ * Shows only the current objective and its index, e.g. "Task 3/8".
  */
 export function createTaskHud(): TaskHud {
-  const W = 560;
-  const H = 720;
+  const W = 768;
+  const H = 176;
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
@@ -73,78 +75,44 @@ export function createTaskHud(): TaskHud {
   const material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
+    opacity: 0.75,
     depthTest: false,
     depthWrite: false,
   });
-  const geometry = new THREE.PlaneGeometry(0.34, 0.437);
+  const geometry = new THREE.PlaneGeometry(0.28, 0.064);
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(0.44, 0.3, -1.0);
+  mesh.position.set(0.16, 0.19, -1.0);
   mesh.renderOrder = 999;
   mesh.frustumCulled = false;
 
   const draw = (done: Set<string>) => {
     ctx.clearRect(0, 0, W, H);
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "rgba(14,20,34,0.88)");
-    g.addColorStop(1, "rgba(9,12,22,0.88)");
-    ctx.fillStyle = g;
-    roundRect(ctx, 8, 8, W - 16, H - 16, 30);
+
+    const total = ALL_TASKS.length;
+    const index = ALL_TASKS.findIndex((t) => !done.has(t.id));
+    const current = index === -1 ? null : ALL_TASKS[index];
+
+    ctx.fillStyle = "rgba(10,14,26,0.55)";
+    roundRect(ctx, 6, 6, W - 12, H - 12, 34);
     ctx.fill();
-    ctx.strokeStyle = "rgba(126,206,255,0.45)";
+    ctx.strokeStyle = "rgba(126,206,255,0.35)";
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    const total = TASK_GROUPS.reduce((n, gr) => n + gr.tasks.length, 0);
-    const count = TASK_GROUPS.reduce(
-      (n, gr) => n + gr.tasks.filter((t) => done.has(t.id)).length,
-      0,
-    );
-
-    ctx.textAlign = "left";
+    ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#f2f7ff";
-    ctx.font = `600 38px ${FONT}`;
-    ctx.fillText("Morning Routine", 36, 56);
-    ctx.fillStyle = "#7ecEff";
-    ctx.font = `500 30px ${FONT}`;
-    ctx.fillText(`${count} / ${total} done`, 36, 100);
 
-    let y = 152;
-    for (const group of TASK_GROUPS) {
-      ctx.fillStyle = "rgba(160,200,235,0.85)";
-      ctx.font = `600 26px ${FONT}`;
-      ctx.fillText(group.room.toUpperCase(), 36, y);
-      y += 40;
-      for (const task of group.tasks) {
-        const ok = done.has(task.id);
-        ctx.strokeStyle = ok ? "#6ee7a8" : "rgba(180,205,230,0.55)";
-        ctx.lineWidth = 3;
-        roundRect(ctx, 38, y - 15, 30, 30, 8);
-        ctx.stroke();
-        if (ok) {
-          ctx.strokeStyle = "#6ee7a8";
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(45, y);
-          ctx.lineTo(52, y + 8);
-          ctx.lineTo(62, y - 9);
-          ctx.stroke();
-        }
-        ctx.fillStyle = ok ? "rgba(150,235,190,0.95)" : "#e6f0fa";
-        ctx.font = `${ok ? 400 : 500} 27px ${FONT}`;
-        ctx.fillText(task.label, 84, y + 1);
-        if (ok) {
-          const w = ctx.measureText(task.label).width;
-          ctx.strokeStyle = "rgba(150,235,190,0.7)";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(84, y + 2);
-          ctx.lineTo(84 + w, y + 2);
-          ctx.stroke();
-        }
-        y += 44;
-      }
-      y += 22;
+    if (!current) {
+      ctx.fillStyle = "#9beec2";
+      ctx.font = `600 44px ${FONT}`;
+      ctx.fillText("All tasks complete", W / 2, H / 2);
+    } else {
+      ctx.fillStyle = "#7ecEff";
+      ctx.font = `600 32px ${FONT}`;
+      ctx.fillText(`Task ${index + 1}/${total}`, W / 2, 56);
+      ctx.fillStyle = "#f2f7ff";
+      ctx.font = `500 40px ${FONT}`;
+      ctx.fillText(current.label, W / 2, 112);
     }
 
     texture.needsUpdate = true;
@@ -162,3 +130,4 @@ export function createTaskHud(): TaskHud {
     },
   };
 }
+
