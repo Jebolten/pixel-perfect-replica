@@ -231,14 +231,6 @@ export function createKitchen(): Room {
   const cavD = zFront - (zBack + t); // usable interior depth
   const cavCz = (zBack + t + zFront) / 2;
 
-  // Split shell and contents so the agnosia filter can mask them separately.
-  const fridgeBody = new THREE.Group();
-  fridgeBody.name = "fridgeBody";
-  fridge.add(fridgeBody);
-  const fridgeContents = new THREE.Group();
-  fridgeContents.name = "fridgeContents";
-  fridge.add(fridgeContents);
-
   const inner = mat(new THREE.MeshStandardMaterial({ color: "#f2f6f8", roughness: 0.85 }));
   const glassMat = mat(
     new THREE.MeshStandardMaterial({
@@ -251,17 +243,17 @@ export function createKitchen(): Room {
     }),
   );
 
-  fridgeBody.add(box(frW, frH, t, steel, 0, frH / 2, zBack + t / 2)); // back
-  fridgeBody.add(box(t, frH, frD - doorT, steel, -frW / 2 + t / 2, frH / 2, -doorT / 2)); // left
-  fridgeBody.add(box(t, frH, frD - doorT, steel, frW / 2 - t / 2, frH / 2, -doorT / 2)); // right
-  fridgeBody.add(box(frW - 2 * t, t, cavD, steel, 0, t / 2, cavCz)); // bottom
-  fridgeBody.add(box(frW - 2 * t, t, cavD, steel, 0, frH - t / 2, cavCz)); // top
+  fridge.add(box(frW, frH, t, steel, 0, frH / 2, zBack + t / 2)); // back
+  fridge.add(box(t, frH, frD - doorT, steel, -frW / 2 + t / 2, frH / 2, -doorT / 2)); // left
+  fridge.add(box(t, frH, frD - doorT, steel, frW / 2 - t / 2, frH / 2, -doorT / 2)); // right
+  fridge.add(box(frW - 2 * t, t, cavD, steel, 0, t / 2, cavCz)); // bottom
+  fridge.add(box(frW - 2 * t, t, cavD, steel, 0, frH - t / 2, cavCz)); // top
 
   // white liner just in front of each structural panel (offset avoids co-planar faces)
-  fridgeBody.add(box(frW - 2 * t - 0.01, frH - 2 * t - 0.01, 0.012, inner, 0, frH / 2, zBack + t + 0.008));
-  fridgeBody.add(box(0.012, frH - 2 * t - 0.01, cavD - 0.01, inner, -frW / 2 + t + 0.008, frH / 2, cavCz));
-  fridgeBody.add(box(0.012, frH - 2 * t - 0.01, cavD - 0.01, inner, frW / 2 - t - 0.008, frH / 2, cavCz));
-  fridgeBody.add(box(frW - 2 * t - 0.02, 0.012, cavD - 0.01, inner, 0, t + 0.008, cavCz));
+  fridge.add(box(frW - 2 * t - 0.01, frH - 2 * t - 0.01, 0.012, inner, 0, frH / 2, zBack + t + 0.008));
+  fridge.add(box(0.012, frH - 2 * t - 0.01, cavD - 0.01, inner, -frW / 2 + t + 0.008, frH / 2, cavCz));
+  fridge.add(box(0.012, frH - 2 * t - 0.01, cavD - 0.01, inner, frW / 2 - t - 0.008, frH / 2, cavCz));
+  fridge.add(box(frW - 2 * t - 0.02, 0.012, cavD - 0.01, inner, 0, t + 0.008, cavCz));
 
   // ceiling light strip
   const strip = box(
@@ -273,7 +265,7 @@ export function createKitchen(): Room {
     frH - t - 0.02,
     cavCz - cavD / 2 + 0.14,
   );
-  fridgeBody.add(strip);
+  fridge.add(strip);
   const fridgeLamp = new THREE.PointLight(0xf2fbff, 2.2, 1.1, 2);
   fridgeLamp.position.set(0, frH - t - 0.08, cavCz);
   fridge.add(fridgeLamp);
@@ -283,8 +275,8 @@ export function createKitchen(): Room {
   const shelfW = frW - 2 * t - 0.02;
   const shelfD = cavD - 0.04;
   for (const sy of shelfY) {
-    fridgeBody.add(box(shelfW, 0.014, shelfD, glassMat, 0, sy, cavCz));
-    fridgeBody.add(box(shelfW, 0.02, 0.012, inner, 0, sy - 0.02, cavCz + shelfD / 2)); // front rail
+    fridge.add(box(shelfW, 0.014, shelfD, glassMat, 0, sy, cavCz));
+    fridge.add(box(shelfW, 0.02, 0.012, inner, 0, sy - 0.02, cavCz + shelfD / 2)); // front rail
   }
 
   // ---- clear storage bins with colourful produce ----
@@ -496,11 +488,11 @@ export function createKitchen(): Room {
   ) => {
     const wall = 0.008;
     // four walls + floor, none co-planar with the shelf below
-    fridgeContents.add(box(bw, bh, wall, binMat, cx, cy + bh / 2, cavCz - bd / 2));
-    fridgeContents.add(box(bw, bh, wall, binMat, cx, cy + bh / 2, cavCz + bd / 2));
-    fridgeContents.add(box(wall, bh, bd, binMat, cx - bw / 2, cy + bh / 2, cavCz));
-    fridgeContents.add(box(wall, bh, bd, binMat, cx + bw / 2, cy + bh / 2, cavCz));
-    fridgeContents.add(box(bw, wall, bd, binMat, cx, cy + wall / 2 + 0.004, cavCz));
+    fridge.add(box(bw, bh, wall, binMat, cx, cy + bh / 2, cavCz - bd / 2));
+    fridge.add(box(bw, bh, wall, binMat, cx, cy + bh / 2, cavCz + bd / 2));
+    fridge.add(box(wall, bh, bd, binMat, cx - bw / 2, cy + bh / 2, cavCz));
+    fridge.add(box(wall, bh, bd, binMat, cx + bw / 2, cy + bh / 2, cavCz));
+    fridge.add(box(bw, wall, bd, binMat, cx, cy + wall / 2 + 0.004, cavCz));
     const cols = Math.min(3, count);
     for (let i = 0; i < count; i++) {
       const item = makeItem(kind, r, i);
@@ -511,7 +503,7 @@ export function createKitchen(): Room {
         cavCz + (row === 0 ? -bd / 5 : bd / 5) + (Math.random() - 0.5) * 0.015,
       );
       item.rotation.y += (Math.random() - 0.5) * 0.6;
-      fridgeContents.add(item);
+      fridge.add(item);
     }
   };
 
@@ -520,7 +512,7 @@ export function createKitchen(): Room {
     const it = makeItem(kind, r, i);
     it.position.set(x, y + 0.012, z);
     it.rotation.y = ry;
-    fridgeContents.add(it);
+    fridge.add(it);
   };
 
   const binW = (frW - 2 * t) / 2 - 0.05;
@@ -581,7 +573,7 @@ export function createKitchen(): Room {
   grabEdge.name = "fridgeEdge";
   fridgeDoor.add(grabEdge);
   fridgeDoor.name = "fridgeDoor";
-  fridgeBody.add(fridgeDoor);
+  fridge.add(fridgeDoor);
   fridge.name = "fridge";
   group.add(fridge);
 
