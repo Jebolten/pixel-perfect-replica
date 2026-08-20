@@ -1,24 +1,48 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, ClientOnly } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const VRScene = lazy(() => import("../components/vr/VRScene"));
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Virtual Agnosia: Morning Routine — VR" },
+      {
+        name: "description",
+        content:
+          "A WebXR experience: teleport across an open floor under a gradient sky and pick a level from the floating menu.",
+      },
+      { property: "og:title", content: "Virtual Agnosia: Morning Routine — VR" },
+      {
+        property: "og:description",
+        content:
+          "Teleport-based VR movement, snap turning and a floating level menu in a calm gradient-sky world.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+    <ClientOnly
+      fallback={
+        <div className="flex h-screen items-center justify-center bg-background text-muted-foreground">
+          Loading VR scene…
+        </div>
+      }
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+      <Suspense
+        fallback={
+          <div className="flex h-screen items-center justify-center bg-background text-muted-foreground">
+            Loading VR scene…
+          </div>
+        }
+      >
+        <VRScene />
+      </Suspense>
+    </ClientOnly>
   );
 }
