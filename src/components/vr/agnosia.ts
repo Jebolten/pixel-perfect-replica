@@ -178,6 +178,7 @@ export function createAgnosiaMask(
     o.children.forEach(walk);
   };
   walk(target);
+  if ((window as any).__agnosiaDebug) console.log('AGN', target.name, boxes.filter(b=>Math.abs(b.box.min.x)<0.4&&Math.abs(b.box.min.z)<0.4).map(b=>[b.box.min.toArray(),b.box.max.toArray()]), maskedMeshes.map(m=>m.type+':'+(m.geometry.type)));
   if (!boxes.length || total.isEmpty()) return null;
 
   const size = new THREE.Vector3();
