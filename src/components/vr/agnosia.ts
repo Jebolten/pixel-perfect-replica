@@ -156,6 +156,12 @@ export function createAgnosiaMask(
   const skip = options.exclude;
   const walk = (o: THREE.Object3D) => {
     if (skip?.(o)) return;
+    // Never voxelize another mask's shapes (masks live inside the room tree and
+    // would otherwise spawn a phantom cluster at the group origin).
+    if (o.name.startsWith("agnosia:")) return;
+    // Already hidden by an earlier mask (e.g. the stove inside the cabinet run).
+    if (!o.visible) return;
+
     const m = o as THREE.Mesh;
     if (m.isMesh && m.geometry) {
       if (!m.geometry.boundingBox) m.geometry.computeBoundingBox();
