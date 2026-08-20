@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "0af0461a-3230-42df-9146-3d308dd8d8f5",
-  "project_id": "2b2091ee-98ec-4413-929f-574362b2acb8",
-  "url": "/__l5e/assets-v1/0af0461a-3230-42df-9146-3d308dd8d8f5/phone_call.mp3",
-  "r2_key": "a/v1/2b2091ee-98ec-4413-929f-574362b2acb8/0af0461a-3230-42df-9146-3d308dd8d8f5/phone_call.mp3",
+  "asset_id": "25ada0ac-445a-40bc-90fd-33d849a18aab",
+  "project_id": "d6deefb3-9672-47f9-b72c-6b23508cc635",
+  "url": "/__l5e/assets-v1/25ada0ac-445a-40bc-90fd-33d849a18aab/phone_call.mp3",
+  "r2_key": "a/v1/d6deefb3-9672-47f9-b72c-6b23508cc635/25ada0ac-445a-40bc-90fd-33d849a18aab/phone_call.mp3",
   "original_filename": "phone_call.mp3",
   "size": 51338,
   "content_type": "audio/mpeg",
-  "created_at": "2026-08-20T17:22:31Z"
+  "created_at": "2026-08-20T19:28:20Z"
 }
