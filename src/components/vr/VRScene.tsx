@@ -424,16 +424,15 @@ export default function VRScene() {
     let itemMasks: AgnosiaMask[] = [];
     const REACH = 0.1;
 
-    const addStaticMask = (name: string) => {
+    const addStaticMask = (name: string, exclude?: (o: THREE.Object3D) => boolean) => {
       const obj = room?.group.getObjectByName(name);
       if (!obj) return;
-      const mask = createAgnosiaMask(obj);
-      if (!mask) return;
-      obj.visible = true;
       const box = new THREE.Box3().setFromObject(obj);
-      obj.visible = false;
+      const mask = createAgnosiaMask(obj, exclude ? { exclude } : {});
+      if (!mask) return;
       staticMasks.push({ mask, box });
     };
+
 
     const addItemMask = (obj: THREE.Object3D | null | undefined) => {
       if (!obj) return;
