@@ -424,16 +424,15 @@ export default function VRScene() {
     let itemMasks: AgnosiaMask[] = [];
     const REACH = 0.1;
 
-    const addStaticMask = (name: string) => {
+    const addStaticMask = (name: string, exclude?: (o: THREE.Object3D) => boolean) => {
       const obj = room?.group.getObjectByName(name);
       if (!obj) return;
-      const mask = createAgnosiaMask(obj);
-      if (!mask) return;
-      obj.visible = true;
       const box = new THREE.Box3().setFromObject(obj);
-      obj.visible = false;
+      const mask = createAgnosiaMask(obj, exclude ? { exclude } : {});
+      if (!mask) return;
       staticMasks.push({ mask, box });
     };
+
 
     const addItemMask = (obj: THREE.Object3D | null | undefined) => {
       if (!obj) return;
@@ -542,7 +541,7 @@ export default function VRScene() {
       room.group.add(frame3d.group);
       addItemMask(frame3d.group);
 
-      ["bed", "nightTable", "wardrobe", "desk", "window", "door"].forEach(addStaticMask);
+      ["bed", "nightTable", "wardrobe", "desk", "window", "door"].forEach((n) => addStaticMask(n));
 
       void loadAlarmClock()
         .then((clock) => {
@@ -581,7 +580,7 @@ export default function VRScene() {
       player.rotation.y = 0; // camera looks toward -Z, away from the front-wall door
       setStatus("Level 2 — The Bathroom.");
 
-      ["sink", "toilet", "cabinet", "door"].forEach(addStaticMask);
+      ["sink", "toilet", "cabinet", "door"].forEach((n) => addStaticMask(n));
 
       const addBathroomItem = (
         g: THREE.Group,
@@ -641,7 +640,16 @@ export default function VRScene() {
       player.rotation.y = 0;
       setStatus("Level 3 — Breakfast. Welcome to the kitchen.");
 
-      ["stove", "baseCabinets", "wallCabinets", "table", "window", "door"].forEach(addStaticMask);
+      ["stove", "baseCabinets", "wallCabinets", "table", "window", "door"].forEach((n) =>
+        addStaticMask(n),
+      );
+      // Fridge shell only — the door, its handle and the shelf contents stay untouched.
+      addStaticMask(
+        "fridge",
+        (o) => o.name === "fridgeDoor" || /^fridge(Juice|Bell|Egg)/.test(o.name),
+      );
+
+
 
       void Promise.all([loadCandle(), loadCoffeeMug()])
         .then((items) => {
@@ -1096,7 +1104,10 @@ export default function VRScene() {
         }
         for (const m of itemMasks) {
           m.setRevealed(heldObjects.has(m.target));
-          if (!m.revealed) m.sync();
+          if (!m.revealed) {
+            m.sync();
+            m.update(t);
+          }
         }
 
         if (staticMasks.length) {
@@ -1110,8 +1121,10 @@ export default function VRScene() {
               }
             }
             s.mask.setRevealed(near);
+            if (!s.mask.revealed) s.mask.update(t);
           }
         }
+
       }
 
 
