@@ -422,6 +422,8 @@ export default function VRScene() {
     let staticMasks: StaticMask[] = [];
     /** Movable objects: revealed only while they are grabbed. */
     let itemMasks: AgnosiaMask[] = [];
+    /** The fridge shell: revealed like a grabbable object, i.e. while a hand touches it. */
+    let fridgeBodyMask: AgnosiaMask | null = null;
     const REACH = 0.1;
 
     const addStaticMask = (name: string) => {
@@ -442,6 +444,8 @@ export default function VRScene() {
     };
 
     const clearMasks = () => {
+      fridgeBodyMask?.dispose();
+      fridgeBodyMask = null;
       staticMasks.forEach((s) => s.mask.dispose());
       itemMasks.forEach((m) => m.dispose());
       staticMasks = [];
@@ -641,7 +645,11 @@ export default function VRScene() {
       player.rotation.y = 0;
       setStatus("Level 3 — Breakfast. Welcome to the kitchen.");
 
-      ["stove", "baseCabinets", "wallCabinets", "table", "window", "door"].forEach(addStaticMask);
+      ["stove", "baseCabinets", "wallCabinets", "table", "window", "door", "fridgeContents"].forEach(
+        addStaticMask,
+      );
+      const fridgeBody = room.group.getObjectByName("fridgeBody");
+      if (fridgeBody) fridgeBodyMask = createAgnosiaMask(fridgeBody);
 
       void Promise.all([loadCandle(), loadCoffeeMug()])
         .then((items) => {
@@ -1086,7 +1094,7 @@ export default function VRScene() {
       }
 
       // ---------- Visual agnosia filter ----------
-      if (itemMasks.length || staticMasks.length) {
+      if (itemMasks.length || staticMasks.length || fridgeBodyMask) {
         const heldObjects = new Set<THREE.Object3D>();
         for (const c of ctrls) {
           if (c.holdingItem) heldObjects.add(c.holdingItem.group);
@@ -1097,6 +1105,23 @@ export default function VRScene() {
         for (const m of itemMasks) {
           m.setRevealed(heldObjects.has(m.target));
           if (!m.revealed) m.sync();
+        }
+
+        if (fridgeBodyMask && fridgeHandle && fridgeEdge) {
+          // Grabbable-object rule: only revealed while a hand is on the door.
+          let touching = false;
+          for (const c of ctrls) {
+            c.grip.getWorldPosition(handWorld);
+            for (const anchor of [fridgeHandle, fridgeEdge]) {
+              anchor.getWorldPosition(fridgeWorld);
+              if (handWorld.distanceTo(fridgeWorld) < 0.3) {
+                touching = true;
+                break;
+              }
+            }
+            if (touching) break;
+          }
+          fridgeBodyMask.setRevealed(touching);
         }
 
         if (staticMasks.length) {
