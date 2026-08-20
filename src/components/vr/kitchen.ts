@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import scenery from "@/assets/landschaft.jpg.asset.json";
+import scenery from "@/assets/landschaft.avif.asset.json";
 import type { Room } from "./bedroom";
 
 /**

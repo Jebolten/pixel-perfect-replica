@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import scenery from "@/assets/landschaft.jpg.asset.json";
+import scenery from "@/assets/landschaft.avif.asset.json";
 
 /**
  * Level 1 — "Waking Up": a normal-sized bedroom (4m x 5m, 2.6m ceiling)
