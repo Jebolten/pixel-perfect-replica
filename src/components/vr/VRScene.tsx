@@ -712,8 +712,6 @@ export default function VRScene() {
     };
 
     /** Level 4: back to the start world, now with the congratulation panel and a TV. */
-    (window as any).__vrdebug = { enterKitchen, player, camera, scene };
-
     const enterFinale = () => {
       if (level === "finale") return;
       clearRoom();
