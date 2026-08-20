@@ -416,6 +416,30 @@ export default function VRScene() {
     /** Free counter area (kitchen-local): the run along the left wall, without the hob. */
     const COUNTER = { minX: -1.8, maxX: -0.8, minZ: -1.05, maxZ: 0.9, surfaceY: 0.93 };
 
+    /**
+     * Entering a level (from the start menu or by skipping ahead) auto-completes
+     * every task of the previous levels — they can no longer be done otherwise.
+     */
+    const completePreviousLevels = (lvl: "bedroom" | "bathroom" | "kitchen") => {
+      if (lvl === "bedroom") return;
+      // Level 1
+      task2Complete = true;
+      task3Complete = true;
+      completeTask("clock");
+      completeTask("phone");
+      completeTask("door1");
+      if (lvl === "kitchen") {
+        // Level 2
+        task4Complete = true;
+        task5Complete = true;
+        completeTask("toothbrush");
+        completeTask("sunscreen");
+        completeTask("door2");
+      }
+    };
+
+
+
     // ---------- Visual agnosia filter ----------
     /** Fixed objects: revealed while a controller is within 10 cm. */
     type StaticMask = { mask: AgnosiaMask; box: THREE.Box3 };
@@ -528,6 +552,7 @@ export default function VRScene() {
       room = createBedroom();
       level = "bedroom";
       hud.mesh.visible = true;
+      completePreviousLevels("bedroom");
       scene.add(room.group);
       refreshBlockers();
       menu.visible = false;
@@ -570,6 +595,7 @@ export default function VRScene() {
       room = createBathroom();
       level = "bathroom";
       hud.mesh.visible = true;
+      completePreviousLevels("bathroom");
       scene.add(room.group);
       refreshBlockers();
       menu.visible = false;
@@ -625,6 +651,7 @@ export default function VRScene() {
       room = createKitchen();
       level = "kitchen";
       hud.mesh.visible = true;
+      completePreviousLevels("kitchen");
       scene.add(room.group);
       refreshBlockers();
       fridgeDoor = (room.group.getObjectByName("fridgeDoor") as THREE.Group) ?? null;
