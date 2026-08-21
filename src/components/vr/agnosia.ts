@@ -426,6 +426,9 @@ export function createAgnosiaMask(
       geoms.forEach((g) => g?.dispose());
       meshes.forEach((im) => im?.dispose());
       material.dispose();
+      hintOutlines.forEach((o) => o.removeFromParent());
+      hintOutlines.length = 0;
+      outlineMat.dispose();
       setMaskedVisible(true);
     },
   };
