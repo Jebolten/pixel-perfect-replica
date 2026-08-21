@@ -57,6 +57,11 @@ export type TaskHud = {
 
 const ALL_TASKS: TaskDef[] = TASK_GROUPS.flatMap((g) => g.tasks);
 
+/** Id of the objective the player is working on right now (null when all done). */
+export function currentTaskId(done: Set<string>): string | null {
+  return ALL_TASKS.find((t) => !done.has(t.id))?.id ?? null;
+}
+
 /**
  * Compact, see-through objective banner near the centre of the field of view.
  * Shows only the current objective and its index, e.g. "Task 3/8".
