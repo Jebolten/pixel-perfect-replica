@@ -91,6 +91,21 @@ export function createBedroom(): Room {
   door.name = "door";
   group.add(door);
 
+  // Opaque dark panel right behind the door leaf so the agnosia mask on the
+  // door never reveals the void outside the room. Never pixelated.
+  const doorBlocker = box(
+    doorW + 0.1,
+    doorH + 0.06,
+    0.04,
+    new THREE.MeshStandardMaterial({ color: 0x140f0b, roughness: 1, metalness: 0 }),
+    doorX,
+    doorH / 2,
+    D / 2 + 0.05,
+  );
+  doorBlocker.name = "doorBlocker";
+  group.add(doorBlocker);
+
+
   // L-shaped door handle (lever). The pivot rotates around Z so the lever turns down.
   const handleBase = new THREE.Mesh(
     geo(new THREE.BoxGeometry(0.07, 0.07, 0.018)),
