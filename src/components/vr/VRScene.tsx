@@ -20,7 +20,7 @@ import {
 import { loadCandle, loadCoffeeMug } from "./tableItems";
 import { loadFridgeItems, type GrabbableItem } from "./fridgeItems";
 import { createAgnosiaMask, distanceToBox, type AgnosiaMask } from "./agnosia";
-import { createTaskHud, TASK_GROUPS } from "./taskHud";
+import { createTaskHud, TASK_GROUPS, currentTaskId } from "./taskHud";
 import { createFinale, YOUTUBE_ID, type Finale } from "./finale";
 
 import { createAlarmSound } from "./alarmSound";
@@ -461,17 +461,19 @@ export default function VRScene() {
     };
 
 
-    /** Objects the player must grab for a task — they get a hint glow when ignored. */
-    const TASK_GRAB_NAMES = new Set([
-      "alarmClock",
-      "phone",
-      "toothbrushHolder",
-      "sunscreen",
-      "fridgeJuiceBottle",
+    /** Objects the player must grab, mapped to the objective they belong to. */
+    const TASK_GRAB_NAMES = new Map<string, string>([
+      ["alarmClock", "clock"],
+      ["phone", "phone"],
+      ["toothbrushHolder", "toothbrush"],
+      ["sunscreen", "sunscreen"],
+      ["fridgeJuiceBottle", "juice"],
     ]);
-    /** Seconds an untouched task object may sit around before it starts glowing. */
-    const HINT_DELAY = 20;
-    /** Mask -> time (elapsed seconds) it appeared; removed once it has been grabbed. */
+    /** Seconds the matching objective may stay current before the item glows. */
+    const HINT_DELAY = 15;
+    /** Mask -> objective id; only the current objective's item can glow. */
+    const hintTaskOf = new Map<AgnosiaMask, string>();
+    /** Mask -> time (elapsed seconds) its objective became the current one. */
     const hintTimers = new Map<AgnosiaMask, number>();
     let nowT = 0;
 
@@ -480,7 +482,8 @@ export default function VRScene() {
       const mask = createAgnosiaMask(obj);
       if (!mask) return;
       itemMasks.push(mask);
-      if (TASK_GRAB_NAMES.has(obj.name)) hintTimers.set(mask, nowT);
+      const taskId = TASK_GRAB_NAMES.get(obj.name);
+      if (taskId) hintTaskOf.set(mask, taskId);
     };
 
     const clearMasks = () => {
@@ -489,6 +492,7 @@ export default function VRScene() {
       staticMasks = [];
       itemMasks = [];
       hintTimers.clear();
+      hintTaskOf.clear();
     };
 
 
@@ -1200,14 +1204,17 @@ export default function VRScene() {
         }
         for (const m of itemMasks) {
           m.setRevealed(heldObjects.has(m.target));
-          // Hint glow: task objects that stay untouched for 20 s start glowing blue.
-          const since = hintTimers.get(m);
-          if (since !== undefined) {
-            if (m.revealed) {
+          // Hint glow: only while its objective is the current one, after 15 s.
+          const taskId = hintTaskOf.get(m);
+          if (taskId !== undefined) {
+            const isCurrent = !m.revealed && currentTaskId(doneSet) === taskId;
+            if (!isCurrent) {
               hintTimers.delete(m);
               m.setHinted(false);
             } else {
-              m.setHinted(t - since >= HINT_DELAY);
+              const since = hintTimers.get(m);
+              if (since === undefined) hintTimers.set(m, t);
+              else m.setHinted(t - since >= HINT_DELAY);
             }
           }
           if (!m.revealed) {
