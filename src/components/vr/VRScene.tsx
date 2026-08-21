@@ -901,6 +901,7 @@ export default function VRScene() {
           heldFrameBy = c;
           c.holdingFrame = true;
           c.grip.attach(frame3d.group);
+          frame3d.pickUp();
           setStatus("You are holding the family photo. Release the grip to put it back.");
           return;
         }
@@ -1087,8 +1088,12 @@ export default function VRScene() {
 
     // ---------- Loop ----------
     const clock = new THREE.Clock();
+    let lastT = 0;
     renderer.setAnimationLoop(() => {
       const t = clock.getElapsedTime();
+      const dt = Math.min(0.1, Math.max(0, t - lastT));
+      lastT = t;
+      frame3d?.update(dt);
       handleTurn();
 
       // Teleport aiming
