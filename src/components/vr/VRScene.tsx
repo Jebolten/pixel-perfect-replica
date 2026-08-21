@@ -21,7 +21,7 @@ import { loadCandle, loadCoffeeMug } from "./tableItems";
 import { loadFridgeItems, type GrabbableItem } from "./fridgeItems";
 import { createAgnosiaMask, distanceToBox, type AgnosiaMask } from "./agnosia";
 import { createTaskHud, TASK_GROUPS, currentTaskId } from "./taskHud";
-import { createFinale, YOUTUBE_ID, type Finale } from "./finale";
+import { createFinale, YOUTUBE_ID, YOUTUBE_URL, type Finale } from "./finale";
 
 import { createAlarmSound } from "./alarmSound";
 import { createPhoneRing } from "./phoneRing";
