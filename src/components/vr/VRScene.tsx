@@ -21,7 +21,7 @@ import { loadCandle, loadCoffeeMug } from "./tableItems";
 import { loadFridgeItems, type GrabbableItem } from "./fridgeItems";
 import { createAgnosiaMask, distanceToBox, type AgnosiaMask } from "./agnosia";
 import { createTaskHud, TASK_GROUPS, currentTaskId } from "./taskHud";
-import { createFinale, YOUTUBE_ID, type Finale } from "./finale";
+import { createFinale, YOUTUBE_ID, YOUTUBE_URL, type Finale } from "./finale";
 
 import { createAlarmSound } from "./alarmSound";
 import { createPhoneRing } from "./phoneRing";
@@ -1298,9 +1298,14 @@ export default function VRScene() {
         }
         if (pointing) {
           videoPlaying = true;
+          // A YouTube player cannot render inside the WebXR layer, so leave
+          // immersive mode first and show the real video on the 2D page.
+          const session = renderer.xr.getSession();
+          if (session) void session.end().catch(() => undefined);
           setShowVideo(true);
-          setStatus("Playing the video on the big screen.");
+          setStatus("Playing the video.");
         }
+
       }
 
       // Non-VR idle camera drift so desktop preview shows the scene
@@ -1395,17 +1400,37 @@ export default function VRScene() {
       </aside>
 
       {showVideo ? (
-        <div className="absolute bottom-6 right-6 w-[420px] max-w-[70vw] overflow-hidden rounded-xl border border-border/60 bg-black shadow-lg">
-          <iframe
-            className="aspect-video w-full"
-            src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1`}
-            title="Visual Agnosia video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+          <div className="w-full max-w-4xl overflow-hidden rounded-xl border border-border/60 bg-black shadow-lg">
+            <iframe
+              className="aspect-video w-full"
+              src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&playsinline=1&rel=0`}
+              title="Visual Agnosia video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+              allowFullScreen
+            />
+            <div className="flex items-center justify-between gap-3 p-3">
+              <a
+                className="text-sm text-primary underline"
+                href={YOUTUBE_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open on YouTube
+              </a>
+              <button
+                type="button"
+                className="rounded-md border border-border/60 px-3 py-1 text-sm text-card-foreground"
+                onClick={() => setShowVideo(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
     </div>
 
   );
 }
+
