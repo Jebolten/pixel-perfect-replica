@@ -408,6 +408,8 @@ export function createAgnosiaMask(
     },
     update: (t: number) => {
       if (revealed) return;
+      if (hinted) pulseHint(t);
+
       for (const inst of instances) {
         const im = meshes[inst.kind];
         if (!im) continue;
