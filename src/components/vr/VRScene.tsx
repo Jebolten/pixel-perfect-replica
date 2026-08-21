@@ -901,6 +901,7 @@ export default function VRScene() {
           heldFrameBy = c;
           c.holdingFrame = true;
           c.grip.attach(frame3d.group);
+          frame3d.pickUp();
           setStatus("You are holding the family photo. Release the grip to put it back.");
           return;
         }
