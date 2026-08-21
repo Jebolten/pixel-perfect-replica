@@ -1199,6 +1199,16 @@ export default function VRScene() {
         }
         for (const m of itemMasks) {
           m.setRevealed(heldObjects.has(m.target));
+          // Hint glow: task objects that stay untouched for 20 s start glowing blue.
+          const since = hintTimers.get(m);
+          if (since !== undefined) {
+            if (m.revealed) {
+              hintTimers.delete(m);
+              m.setHinted(false);
+            } else {
+              m.setHinted(t - since >= HINT_DELAY);
+            }
+          }
           if (!m.revealed) {
             m.sync();
             m.update(t);
