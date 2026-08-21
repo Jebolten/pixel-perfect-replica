@@ -334,6 +334,9 @@ export default function VRScene() {
           if (hit.x < b.minX || hit.x > b.maxX || hit.z < b.minZ || hit.z > b.maxZ) hit = null;
           else if (blockers.some((r) => hit!.x > r.minX && hit!.x < r.maxX && hit!.z > r.minZ && hit!.z < r.maxZ))
             hit = null;
+        } else if (level === "none") {
+          // Start menu: restrict teleport to a 2x2m square in front of the menu window.
+          if (hit.x < -1 || hit.x > 1 || hit.z < -2 || hit.z > 0) hit = null;
         } else if (hit.length() > 29) {
           hit = null;
         }
