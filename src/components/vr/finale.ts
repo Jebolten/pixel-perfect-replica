@@ -125,25 +125,8 @@ export function createFinale(): Finale {
   screen.name = "tvScreen";
   tv.add(screen);
 
-  const hintTex = canvasTexture(768, 128, (ctx) => {
-    ctx.clearRect(0, 0, 768, 128);
-    ctx.fillStyle = "rgba(10,14,26,0.85)";
-    roundRect(ctx, 6, 6, 756, 116, 24);
-    ctx.fill();
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "#9fd4ff";
-    ctx.font = `500 44px ${FONT}`;
-    ctx.fillText("Point at the screen to play", 384, 64);
-  });
-  texs.push(hintTex);
-  const hintGeo = new THREE.PlaneGeometry(1.5, 0.25);
-  const hintMat = new THREE.MeshBasicMaterial({ map: hintTex, transparent: true });
-  geos.push(hintGeo);
-  mats.push(hintMat);
-  const hint = new THREE.Mesh(hintGeo, hintMat);
-  hint.position.set(0, 0.78, 0.1);
-  tv.add(hint);
+
+
 
   group.add(tv);
 
