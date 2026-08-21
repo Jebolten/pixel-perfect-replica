@@ -1298,9 +1298,14 @@ export default function VRScene() {
         }
         if (pointing) {
           videoPlaying = true;
+          // A YouTube player cannot render inside the WebXR layer, so leave
+          // immersive mode first and show the real video on the 2D page.
+          const session = renderer.xr.getSession();
+          if (session) void session.end().catch(() => undefined);
           setShowVideo(true);
-          setStatus("Playing the video on the big screen.");
+          setStatus("Playing the video.");
         }
+
       }
 
       // Non-VR idle camera drift so desktop preview shows the scene
