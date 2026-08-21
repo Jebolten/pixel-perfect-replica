@@ -79,6 +79,21 @@ export function createKitchen(): Room {
   door.name = "door";
   group.add(door);
 
+  // Opaque dark panel behind the door leaf: blocks the view out of the room
+  // when the door is pixelated. Excluded from the agnosia masks.
+  const doorBlocker = box(
+    doorW + 0.1,
+    doorH + 0.06,
+    0.04,
+    new THREE.MeshStandardMaterial({ color: 0x140f0b, roughness: 1, metalness: 0 }),
+    doorX,
+    doorH / 2,
+    D / 2 + 0.05,
+  );
+  doorBlocker.name = "doorBlocker";
+  group.add(doorBlocker);
+
+
   const handleBase = new THREE.Mesh(geo(new THREE.BoxGeometry(0.07, 0.07, 0.018)), metalMat);
   handleBase.position.set(doorX - doorW / 2 + 0.16, 1.05, D / 2 - 0.055);
   handleBase.castShadow = true;
