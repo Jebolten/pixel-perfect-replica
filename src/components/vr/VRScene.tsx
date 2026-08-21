@@ -1111,6 +1111,7 @@ export default function VRScene() {
     let lastT = 0;
     renderer.setAnimationLoop(() => {
       const t = clock.getElapsedTime();
+      nowT = t;
       const dt = Math.min(0.1, Math.max(0, t - lastT));
       lastT = t;
       frame3d?.update(dt);
