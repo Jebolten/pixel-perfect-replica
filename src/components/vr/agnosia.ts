@@ -356,7 +356,7 @@ export function createAgnosiaMask(
     depthWrite: false,
   });
   const applyHint = (v: boolean) => {
-    // Mask shapes glow.
+    // Mask shapes glow (pulsing strength is driven per-frame in update()).
     material.emissive.copy(v ? HINT : new THREE.Color(0x000000));
     material.emissiveIntensity = v ? 0.9 : 0;
     material.needsUpdate = true;
@@ -374,6 +374,14 @@ export function createAgnosiaMask(
     }
     hintOutlines.forEach((o) => (o.visible = v));
   };
+
+  /** Flash between the object's own colour and blue while hinted. */
+  const pulseHint = (t: number) => {
+    const k = 0.5 + 0.5 * Math.sin(t * 5);
+    material.emissiveIntensity = 0.1 + k * 1.3;
+    outlineMat.opacity = 0.08 + k * 0.6;
+  };
+
 
   const mask: AgnosiaMask = {
     group,
