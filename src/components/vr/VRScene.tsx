@@ -461,10 +461,26 @@ export default function VRScene() {
     };
 
 
+    /** Objects the player must grab for a task — they get a hint glow when ignored. */
+    const TASK_GRAB_NAMES = new Set([
+      "alarmClock",
+      "phone",
+      "toothbrushHolder",
+      "sunscreen",
+      "fridgeJuiceBottle",
+    ]);
+    /** Seconds an untouched task object may sit around before it starts glowing. */
+    const HINT_DELAY = 20;
+    /** Mask -> time (elapsed seconds) it appeared; removed once it has been grabbed. */
+    const hintTimers = new Map<AgnosiaMask, number>();
+    let nowT = 0;
+
     const addItemMask = (obj: THREE.Object3D | null | undefined) => {
       if (!obj) return;
       const mask = createAgnosiaMask(obj);
-      if (mask) itemMasks.push(mask);
+      if (!mask) return;
+      itemMasks.push(mask);
+      if (TASK_GRAB_NAMES.has(obj.name)) hintTimers.set(mask, nowT);
     };
 
     const clearMasks = () => {
@@ -472,6 +488,7 @@ export default function VRScene() {
       itemMasks.forEach((m) => m.dispose());
       staticMasks = [];
       itemMasks = [];
+      hintTimers.clear();
     };
 
 
