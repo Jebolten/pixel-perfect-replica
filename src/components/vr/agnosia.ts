@@ -16,6 +16,9 @@ export type AgnosiaMask = {
   target: THREE.Object3D;
   revealed: boolean;
   setRevealed: (v: boolean) => void;
+  /** Glowing blue hint on both the shapes and the real object. */
+  hinted: boolean;
+  setHinted: (v: boolean) => void;
   /** Keeps the mask on top of a moving target. */
   sync: () => void;
   /** Per-frame wobble. */
