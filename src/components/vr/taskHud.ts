@@ -24,7 +24,7 @@ export const TASK_GROUPS: TaskGroup[] = [
   {
     room: "Level 3 — Kitchen",
     tasks: [
-      { id: "juice", label: "Orange juice on the counter" },
+      { id: "juice", label: "Put the orange juice on the counter" },
       { id: "door3", label: "Leave through the door" },
     ],
   },
