@@ -16,6 +16,9 @@ export type AgnosiaMask = {
   target: THREE.Object3D;
   revealed: boolean;
   setRevealed: (v: boolean) => void;
+  /** Glowing blue hint on both the shapes and the real object. */
+  hinted: boolean;
+  setHinted: (v: boolean) => void;
   /** Keeps the mask on top of a moving target. */
   sync: () => void;
   /** Per-frame wobble. */
@@ -341,11 +344,50 @@ export function createAgnosiaMask(
   const wobbleEuler = new THREE.Euler();
   const wobbleQuat = new THREE.Quaternion();
 
+  // --- Blue hint glow ---
+  let hinted = false;
+  const HINT = new THREE.Color(0x3fa9ff);
+  const hintOutlines: THREE.Mesh[] = [];
+  const outlineMat = new THREE.MeshBasicMaterial({
+    color: HINT,
+    side: THREE.BackSide,
+    transparent: true,
+    opacity: 0.55,
+    depthWrite: false,
+  });
+  const applyHint = (v: boolean) => {
+    // Mask shapes glow.
+    material.emissive.copy(v ? HINT : new THREE.Color(0x000000));
+    material.emissiveIntensity = v ? 0.9 : 0;
+    material.needsUpdate = true;
+    // Real object gets a blue shell outline.
+    if (v && !hintOutlines.length) {
+      for (const m of maskedMeshes) {
+        if (!m.geometry) continue;
+        const o = new THREE.Mesh(m.geometry, outlineMat);
+        o.name = "agnosia:hintOutline";
+        o.scale.setScalar(1.06);
+        o.renderOrder = 5;
+        m.add(o);
+        hintOutlines.push(o);
+      }
+    }
+    hintOutlines.forEach((o) => (o.visible = v));
+  };
+
   const mask: AgnosiaMask = {
     group,
     target,
     get revealed() {
       return revealed;
+    },
+    get hinted() {
+      return hinted;
+    },
+    setHinted: (v: boolean) => {
+      if (v === hinted) return;
+      hinted = v;
+      applyHint(v);
     },
     setRevealed: (v: boolean) => {
       if (v === revealed) return;
@@ -384,6 +426,9 @@ export function createAgnosiaMask(
       geoms.forEach((g) => g?.dispose());
       meshes.forEach((im) => im?.dispose());
       material.dispose();
+      hintOutlines.forEach((o) => o.removeFromParent());
+      hintOutlines.length = 0;
+      outlineMat.dispose();
       setMaskedVisible(true);
     },
   };
