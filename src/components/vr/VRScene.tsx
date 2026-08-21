@@ -914,15 +914,20 @@ export default function VRScene() {
           heldPhoneBy = c;
           c.holdingPhone = true;
           const wasRinging = phoneRing.playing;
-          if (wasRinging) phoneAnswered = true;
+          phoneAnswered = true;
           stopPhoneCall();
           c.grip.attach(phone3d);
-          setStatus(
-            wasRinging
-              ? "You answer the telephone. Release the grip to put it back."
-              : "You are holding the telephone. Release the grip to put it back.",
-          );
+          if (!wasRinging && !grampaMessage.played) {
+            // Grabbed before it ever rang: the message starts right away.
+            grampaMessage.playOnce();
+            task2Complete = true;
+            completeTask("phone");
+            setStatus("Grampa's message starts playing. Task 2 complete — the bedroom door is now open.");
+          } else {
+            setStatus("You answer the telephone. Release the grip to put it back.");
+          }
           return;
+
         }
       }
 
