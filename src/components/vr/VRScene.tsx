@@ -1087,9 +1087,12 @@ export default function VRScene() {
 
     // ---------- Loop ----------
     const clock = new THREE.Clock();
+    let lastT = 0;
     renderer.setAnimationLoop(() => {
       const t = clock.getElapsedTime();
-      frame3d?.update(clock.getDelta());
+      const dt = Math.min(0.1, Math.max(0, t - lastT));
+      lastT = t;
+      frame3d?.update(dt);
       handleTurn();
 
       // Teleport aiming
