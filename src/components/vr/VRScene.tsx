@@ -475,7 +475,6 @@ export default function VRScene() {
     const hintTaskOf = new Map<AgnosiaMask, string>();
     /** Mask -> time (elapsed seconds) its objective became the current one. */
     const hintTimers = new Map<AgnosiaMask, number>();
-    let nowT = 0;
 
     const addItemMask = (obj: THREE.Object3D | null | undefined) => {
       if (!obj) return;
@@ -1115,7 +1114,6 @@ export default function VRScene() {
     let lastT = 0;
     renderer.setAnimationLoop(() => {
       const t = clock.getElapsedTime();
-      nowT = t;
       const dt = Math.min(0.1, Math.max(0, t - lastT));
       lastT = t;
       frame3d?.update(dt);
