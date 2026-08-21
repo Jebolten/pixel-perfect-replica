@@ -491,7 +491,45 @@ export default function VRScene() {
       phoneRing.stop();
     };
 
+    /**
+     * Anything still in a hand is dropped back to its resting spot before the
+     * room is torn down — items can never travel into another level.
+     */
+    const returnHeldObjects = () => {
+      ctrls.forEach((c) => {
+        if (c.holdingItem) {
+          const it = c.holdingItem;
+          c.holdingItem = null;
+          const isFridge = fridgeItems.includes(it);
+          (isFridge ? (fridgeGroup ?? room?.group) : room?.group)?.add(it.group);
+          it.reset();
+        }
+        if (c.holdingPhone && phone3d) {
+          c.holdingPhone = false;
+          room?.group.add(phone3d);
+          phone3d.position.copy(PHONE_REST_POSITION);
+          phone3d.rotation.set(0, PHONE_REST_ROTATION_Y, 0);
+          phone3d.scale.setScalar(1);
+        }
+        if (c.holdingFrame && frame3d) {
+          c.holdingFrame = false;
+          room?.group.add(frame3d.group);
+          frame3d.resetToDesk();
+        }
+        if (c.holding && clock3d) {
+          c.holding = false;
+          room?.group.add(clock3d.group);
+          clock3d.resetToTable();
+        }
+      });
+      juiceHeldBy = null;
+      heldPhoneBy = null;
+      heldFrameBy = null;
+      heldBy = null;
+    };
+
     const clearRoom = () => {
+      returnHeldObjects();
       clearMasks();
       if (heldBy) {
         heldBy.holding = false;
