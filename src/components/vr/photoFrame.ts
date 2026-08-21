@@ -116,11 +116,11 @@ export function createPhotoFrame(): PhotoFrame {
   let held = false;
   let t = 0;
 
-  const DELAY = 1.2;
-  const FADE = 0.7;
-  const LABEL_IN = 0.25;
-  const LABEL_HOLD = 1.4;
-  const LABEL_OUT = 0.5;
+  const DELAY = 0.5;
+  const FADE = 0.4;
+  const LABEL_IN = 0.15;
+  const LABEL_HOLD = 0.9;
+  const LABEL_OUT = 0.35;
 
   return {
     group,

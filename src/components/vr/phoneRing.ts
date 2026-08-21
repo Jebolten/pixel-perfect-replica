@@ -32,7 +32,7 @@ export function createPhoneRing(): PhoneRing {
           if (!playing || !audio) return;
           audio.currentTime = 0;
           void audio.play().catch(() => undefined);
-        }, 5000);
+        }, 2200);
       };
 
       audio.onended = playAgain;
